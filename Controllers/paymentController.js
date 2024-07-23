@@ -42,14 +42,14 @@ export const paymentVerification = catchAsyncError(async (req, res, next) => {
     const subscription_id = user.subscription.id;
 
     const generated_signature = crypto
-        .createHash("sha256", process.env.RAZORPAY_API_SECRET)
+        .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
         .update(razorpay_payment_id + "|" + subscription_id, "utf-8")
         .digest("hex");
 
     const isAuthentic = generated_signature === razorpay_signature;
 
     if (!isAuthentic)
-        return res.redirect(`${process.env.FRONTEND_URL}/paymentfailed`);
+        return res.redirect(`${process.env.FRONTEND_URL}/paymentfail`);
 
     //  database comes here
     await Payment.create({
@@ -83,20 +83,20 @@ export const cancelSubscription = catchAsyncError(async (req, res, next) => {
 
     await instance.subscriptions.cancel(subscriptionId);
 
-    const paymet = await Payment.findOne({
+    const payment = await Payment.findOne({
         razorpay_payment_id: subscriptionId,
     });
 
-    const gap = Date.noW() - paymet.createdAt;
+    const gap = Date.now() - payment.createdAt;
 
     const refundTime = process.env.REFUND_DAYS * 24 * 60 * 60* 1000;
 
     if(refundTime>gap) {
-        await instance.payments.refund(paymet.razorpay_payment_id);
+        await instance.payments.refund(payment.razorpay_payment_id);
         refund = true;
     }
     
-   await paymet.deleteOne();
+   await payment.deleteOne();
    user.subscription.id=undefined;
    user.subscription.status=undefined;
    await user.save();

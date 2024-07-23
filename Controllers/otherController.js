@@ -46,7 +46,8 @@ export const mangaRequest = catchAsyncError(async(req, res, next)=>{
 
 export const getDashboardStats = catchAsyncError(async (req,res,next) => {
 
-    const stats = await Stats.find({}).sort({createdAt: "desc"}).limit(12);
+    // const stats = await Stats.find({}).sort({createdAt: "desc"}).limit(12);
+    const stats = await Stats.find({}).sort({ createdAt: -1 }).limit(12);
 
     const statsData = [];
 

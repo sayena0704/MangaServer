@@ -1,54 +1,84 @@
+// import app from "./app.js";
+// import {connectDB} from "./Config/database.js"
+// import cloudinary from "cloudinary"
+// import Razorpay from "razorpay"
+// import nodeCron from "node-cron";
+// import { Stats } from "./Models/Stats.js";
+
+// connectDB();
+
+// cloudinary.v2.config({
+//    cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
+//    api_key: process.env.CLOUDINARY_CLIENT_API,
+//    api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
+// });
+
+// export const instance = new Razorpay({
+//    key_id: process.env.RAZORPAY_API_KEY,
+//    key_secret: process.env.RAZORPAY_API_SECRET,
+//  });
+
+//  nodeCron.schedule("0 0 0 1 * *", async ()=>{
+//    try{
+//       await Stats.create({});
+//    } catch(error){
+//       console.log(error);
+//    }
+//  });
+
+// //  const temp = async() =>{
+// //    await Stats.create({});
+// //  }
+// // temp();
+// app.listen(process.env.PORT,()=>{
+//    console.log(`Server is working on port: ${process.env.PORT}`);
+// });
+
+
 import app from "./app.js";
-import {connectDB} from "./Config/database.js"
-import cloudinary from "cloudinary"
-import Razorpay from "razorpay"
+import { connectDB } from "./config/database.js";
+import cloudinary from "cloudinary";
+import Razorpay from "razorpay";
 import nodeCron from "node-cron";
 import { Stats } from "./Models/Stats.js";
 
 connectDB();
 
 cloudinary.v2.config({
-   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
-   api_key: process.env.CLOUDINARY_CLIENT_API,
-   api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
+  api_key: process.env.CLOUDINARY_CLIENT_API,
+  api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
 });
 
 export const instance = new Razorpay({
-   key_id: process.env.RAZORPAY_API_KEY,
-   key_secret: process.env.RAZORPAY_API_SECRET,
- });
-
- nodeCron.schedule("0 0 0 1 * *", async ()=>{
-   try{
-      await Stats.create();
-   } catch(error){
-      console.log(error);
-   }
- });
-
- const temp = async() =>{
-   await Stats.create({});
- }
-temp();
-app.listen(process.env.PORT,()=>{
-   console.log(`Server is working on port: ${process.env.PORT}`);
+  key_id: process.env.RAZORPAY_API_KEY,
+  key_secret: process.env.RAZORPAY_API_SECRET,
 });
 
-// import express from "express";
-// import { connectDB } from "./db.js";
-// import mangaRoutes from "./Routes/mangaRoutes.js"; // Adjust the path if necessary
+nodeCron.schedule("0 0 0 1 * *", async () => {
+//   try {
+//     await Stats.create({});
+//   } catch (error) {
+//     console.log(error);
+//   }
+try {
+   const today = new Date();
+   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-// const app = express();
+   // Check if a document already exists for the current month
+   let stats = await Stats.findOne({ createdAt: { $gte: startOfMonth } });
 
-// // Connect to the database
-// connectDB();
+   if (!stats) {
+     // Create new document if it doesn't exist
+     await Stats.create({});
+   }
+ } catch (error) {
+   console.log(error);
+ }
+});
 
-// app.use(express.json());
+app.listen(process.env.PORT,()=>{
+  console.log(`Server is working on port: ${process.env.PORT}`)
+})
 
-// // Use routes
-// app.use('/api', mangaRoutes);
 
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });

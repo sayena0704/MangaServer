@@ -1,5 +1,5 @@
 import app from "./app.js";
-import { connectDB } from "./config/database.js";
+import { connectDB } from "./Config/database.js";
 import cloudinary from "cloudinary";
 import Razorpay from "razorpay";
 import nodeCron from "node-cron";

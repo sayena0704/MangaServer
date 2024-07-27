@@ -17,9 +17,13 @@ export const getAllMangas = catchAsyncError(async (req, res, next) => {
     title: { $regex: keyword, $options: "i" }
   };
 
+  // if (genre) {
+  //   query.genres = { $elemMatch: { $regex: genre, $options: "i" } };
+  // }
+  
   if (genre) {
-    query.genres = { $elemMatch: { $regex: genre, $options: "i" } };
-  }
+    query.genres = genre; // Match exact genre or handle array
+}
  
   const mangas = await Manga.find(query).select("-chapters");
   

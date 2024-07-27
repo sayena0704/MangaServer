@@ -212,7 +212,7 @@ export const resetPassword = catchAsyncError(async(req, res, next) =>{
 export const addToLibrary = catchAsyncError(async (req, res, next) => {
    
   
-    const manga = await Manga.findById(req.body._id);
+    const manga = await Manga.findById(req.body.id);
     const user = await User.findById(req.user._id);
   
     if (!manga) {

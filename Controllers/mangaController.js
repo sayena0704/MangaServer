@@ -107,7 +107,21 @@ export const getMangaChapters = catchAsyncError( async (req, res, next) => {
 
   res.status(200).json({
      success: true,
-     chapters: manga.chapters,
+    //  chapters: manga.chapters,
+    manga: {
+      id: manga._id,
+      title: manga.title,
+      description: manga.description,
+      author: manga.author,
+      artist: manga.artist,
+      genres: manga.genres,
+      status: manga.status,
+      rating: manga.rating,
+      bookmarks: manga.bookmarks,
+      comments: manga.comments,
+      coverImage: manga.coverImage,
+      chapters: manga.chapters,
+    },
      views: manga.views,
   });
 
